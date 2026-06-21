@@ -1,11 +1,11 @@
-# AGENTS.md — @treecombinator/sdk-auth
+# AGENTS.md — @treecombinator/sdk-server-auth
 
 Auth (authentication) domain of the Tree Combinator SDK for Cloudflare Workers. D1 + Web Crypto (JWT/PBKDF2). The app injects a `sendEmail` function for the magic-link and password-reset mails. Run `AUTH_SCHEMA` once.
 
 ## Use
 
 ```ts
-import { createAuth, AUTH_SCHEMA } from "@treecombinator/sdk-auth";
+import { createAuth, AUTH_SCHEMA } from "@treecombinator/sdk-server-auth";
 
 const auth = createAuth({
   db: env.DB,

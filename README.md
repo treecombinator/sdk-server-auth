@@ -1,4 +1,4 @@
-# @treecombinator/sdk-auth
+# @treecombinator/sdk-server-auth
 
 ---
 
@@ -13,13 +13,13 @@ The **auth** domain of the Tree Combinator SDK — registration, login and sessi
 ## Install
 
 ```bash
-npm install github:treecombinator/sdk-auth
+npm install github:treecombinator/sdk-server-auth
 ```
 
 ## Use
 
 ```ts
-import { createAuth, AUTH_SCHEMA } from "@treecombinator/sdk-auth";
+import { createAuth, AUTH_SCHEMA } from "@treecombinator/sdk-server-auth";
 
 // run AUTH_SCHEMA once as a D1 migration, then:
 const auth = createAuth({
