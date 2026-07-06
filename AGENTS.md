@@ -16,13 +16,16 @@ const auth = createAuth({
 const session = await auth.login(email, password);
 ```
 
-`createAuth({ db, jwtSecret, appUrl, sendEmail, sessionTtlSec?, tokenTtlSec?, pbkdf2Iterations? })` →
+`createAuth({ db, jwtSecret, appUrl, sendEmail, sessionTtlSec?, tokenTtlSec?, pbkdf2Iterations?, magicLinkPath?, passwordResetPath? })` →
 `register`, `login`, `verifySession`, `startMagicLink`/`consumeMagicLink`,
 `startPasswordReset`/`consumePasswordReset`. DDL: `AUTH_SCHEMA`.
 
 ## Notes
 
-- This package OWNS the auth wire contract: `AuthUser`, `Session`, `AUTH_ROUTES`, `AuthRoute`, `SocialProvider`, `SocialLoginInput` — the client imports them from here.
+- This package OWNS the auth wire contract: `AuthUser`, `Session`, `AUTH_ROUTES`, `AuthRoute`, `SocialProvider`, `SocialLoginInput`. Client packages declare the same shapes locally, kept in sync with these by convention (see README "Wire" for body shapes and status mapping).
+- `AUTH_ROUTES.social` is contract only — this package implements no social credential exchange.
 - Email is an injected `sendEmail(message)` function (no port, no dependency on sdk-email).
-- Errors are `TcError` (from `@treecombinator/sdk-common`) with specific codes: `email_already_registered`, `invalid_credentials`, `magic_link_invalid`, `reset_token_invalid`.
-- `pbkdf2Iterations` defaults to 100,000 (Worker-safe); changing it invalidates existing password hashes.
+- Errors are `TcError` (from `@treecombinator/sdk-common`) with specific codes: `email_already_registered`, `email_invalid`, `password_too_short`, `invalid_credentials`, `magic_link_invalid`, `reset_token_invalid`, `jwt_secret_weak`.
+- `startMagicLink` creates a user for an unknown (shape-valid) email — passwordless signup by design. `consumePasswordReset` revokes all of the user's outstanding one-time tokens; already-issued session JWTs stay valid until `exp` (stateless verification).
+- `jwtSecret` must be ≥ 32 bytes (`createAuth` throws `jwt_secret_weak`). Emails are trimmed + lowercased; passwords need ≥ 8 chars.
+- `pbkdf2Iterations` defaults to 100,000 (Worker-safe; deliberately below OWASP 600k); changing it invalidates existing password hashes.

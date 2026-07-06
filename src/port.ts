@@ -1,10 +1,12 @@
 /**
  * The auth domain — authentication (who you are).
  * Flows: password (register/login), magic link, password reset — all over JWT sessions.
- * Social login (OAuth) is verified server-side.
+ * Social login: only the wire contract (`AUTH_ROUTES.social`, `SocialLoginInput`) is declared
+ * here — this package does not implement the credential exchange; the BFF must verify the
+ * provider credential itself.
  *
- * This package OWNS the auth wire contract below — the DTOs and routes the BFF returns
- * and the client consumes. The client imports them from here.
+ * This package OWNS the auth wire contract below — the DTOs and routes the BFF serves.
+ * Client packages declare the same shapes locally, kept in sync with these by convention.
  */
 
 export interface AuthUser {

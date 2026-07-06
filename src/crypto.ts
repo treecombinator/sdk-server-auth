@@ -62,8 +62,12 @@ export async function verifyPassword(password: string, stored: string, iteration
   if (parts.length !== 2) return false;
   const saltB = parts[0]!;
   const hashB = parts[1]!;
-  const hash = await pbkdf2(password, b64urlToBytes(saltB), iterations);
-  return timingSafeEqual(bytesToB64url(hash), hashB);
+  try {
+    const hash = await pbkdf2(password, b64urlToBytes(saltB), iterations);
+    return timingSafeEqual(bytesToB64url(hash), hashB);
+  } catch {
+    return false; // malformed stored hash (e.g. salt that isn't base64url)
+  }
 }
 
 async function hmacSha256(secret: string, data: string): Promise<Uint8Array> {
