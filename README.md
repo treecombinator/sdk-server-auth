@@ -13,7 +13,7 @@ The **auth** domain of the Tree Combinator SDK — registration, login and sessi
 ## Install
 
 ```bash
-npm install github:treecombinator/sdk-server-auth
+givo add @treecombinator/sdk-server-auth
 ```
 
 ## Use
