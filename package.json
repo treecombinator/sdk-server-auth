@@ -15,8 +15,8 @@
     }
   },
   "scripts": { "build": "tsup", "prepare": "tsup", "typecheck": "tsc --noEmit", "clean": "rm -rf dist" },
-  "dependencies": { "@treecombinator/sdk-common": "github:treecombinator/sdk-common" },
+  "dependencies": { "@treecombinator/sdk-common": "^0.0.1" },
   "devDependencies": { "@cloudflare/workers-types": "^4.20240000.0", "tsup": "^8.5.1", "typescript": "^5.5.0" },
   "repository": { "type": "git", "url": "git+https://github.com/treecombinator/sdk-server-auth.git" },
-  "publishConfig": { "access": "public" }
+  "publishConfig": { "access": "public", "registry": "https://registry.givo.dev/npm/" }
 }
