@@ -3,7 +3,7 @@ import { createD1Auth, type D1AuthConfig } from "./adapters/d1";
 
 export type { Auth, AuthUser, Session, AuthRoute, SocialProvider, SocialLoginInput } from "./port";
 export { AUTH_ROUTES } from "./port";
-export type { D1AuthConfig, AuthEmail } from "./adapters/d1";
+export type { D1AuthConfig } from "./adapters/d1";
 export { AUTH_SCHEMA } from "./adapters/d1";
 
 /**

@@ -8,7 +8,7 @@
 
 ---
 
-The **auth** domain of the Tree Combinator SDK — registration, login and session verification on Cloudflare D1 with Web Crypto (JWT/PBKDF2), plus magic-link and password-reset flows. It owns the auth wire contract the client consumes, and takes an injected `sendEmail` function for its mails — depending only on `@treecombinator/sdk-common` for the error type.
+The **auth** domain of the Tree Combinator SDK — registration, login and session verification on Cloudflare D1 with Web Crypto (JWT/PBKDF2), plus magic-link and password-reset flows. It owns the auth wire contract the client consumes, and takes an injected `sendEmail` function for its mails — the message shape is the email domain's `EmailMessage`, imported as a type only, so the only runtime dependency is `@treecombinator/sdk-common` for the error type.
 
 ## Install
 
@@ -70,7 +70,7 @@ Reserve 401 on other routes for a dead/absent session (e.g. a code like `session
 ## Notes
 
 - Errors are `TcError` with specific codes: `email_already_registered`, `email_invalid`, `password_too_short`, `invalid_credentials`, `magic_link_invalid`, `reset_token_invalid`, `jwt_secret_weak`.
-- `sendEmail` is injected — the app wires its own email adapter; this package has no email dependency.
+- `sendEmail` is injected — the app wires its own email adapter (e.g. `email.send` from `@treecombinator/sdk-server-email`, or any function with its shape). The contract is the email domain's `EmailMessage`, imported as a type only and inlined into this package's declarations: one source of truth for the shape, zero runtime email dependencies.
 - Emails are normalized (trim + lowercase) everywhere; passwords must be at least 8 characters (`register` and `consumePasswordReset`).
 - `jwtSecret` must be at least 32 bytes — `createAuth` throws `jwt_secret_weak` otherwise.
 - Session JWTs are verified statelessly, so a password reset cannot revoke ones already issued: they stay valid until `exp`. Size `sessionTtlSec` (default 7 days) with that window in mind.

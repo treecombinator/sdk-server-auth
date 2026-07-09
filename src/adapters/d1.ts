@@ -1,4 +1,5 @@
 import { TcError } from "@treecombinator/sdk-common";
+import type { EmailMessage } from "@treecombinator/sdk-server-email";
 import type { Auth, AuthUser, Session } from "../port";
 import {
   randomId,
@@ -24,18 +25,15 @@ CREATE TABLE IF NOT EXISTS auth_tokens (
   expires_at TEXT NOT NULL
 );`;
 
-/** The email this domain asks the app to send (magic link / password reset). */
-export interface AuthEmail {
-  to: string;
-  subject: string;
-  text: string;
-  html: string;
-}
-
 export interface D1AuthConfig {
   db: D1Database;
-  /** Sends the magic-link and password-reset emails — the app wires its email adapter here. */
-  sendEmail: (message: AuthEmail) => Promise<void>;
+  /**
+   * Sends the magic-link and password-reset emails — wire `email.send` from the email
+   * domain here (or any function with its shape). The contract is the email domain's
+   * `EmailMessage`, imported as a TYPE only and inlined into this package's declarations
+   * at build: one source of truth for the shape, still zero runtime email dependencies.
+   */
+  sendEmail: (message: EmailMessage) => Promise<void>;
   /** Secret to sign session JWTs. */
   jwtSecret: string;
   /** Base app URL used to build links, e.g. "https://app.example.com". */
