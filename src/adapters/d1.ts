@@ -38,7 +38,7 @@ export interface D1AuthConfig {
   sendEmail: (message: EmailMessage) => Promise<void>;
   /** Secret to sign session JWTs. */
   jwtSecret: string;
-  /** Base app URL used to build links, e.g. "https://app.example.com". */
+  /** Base app URL used to build links, e.g. "https://app.example.com". A trailing slash is fine. */
   appUrl: string;
   /** Session lifetime in seconds (default 7 days). */
   sessionTtlSec?: number;
@@ -74,6 +74,7 @@ export function createD1Auth(config: D1AuthConfig): Auth {
   }
   const sessionTtl = config.sessionTtlSec ?? 604800;
   const tokenTtl = config.tokenTtlSec ?? 900;
+  const appUrl = config.appUrl.replace(/\/+$/, "");
   const db = config.db;
 
   const userByEmail = (email: string) =>
@@ -156,7 +157,7 @@ export function createD1Auth(config: D1AuthConfig): Auth {
       // Passwordless signup by design: an unknown (shape-valid) email gets a user created here.
       const u = (await userByEmail(to)) ?? { id: (await createUser(to, null)).id };
       const raw = await mintOneTime(u.id, "magic");
-      const link = `${config.appUrl}${config.magicLinkPath ?? "/auth/magic"}?token=${raw}`;
+      const link = `${appUrl}${config.magicLinkPath ?? "/auth/magic"}?token=${raw}`;
       await config.sendEmail({
         to,
         subject: "Your sign-in link",
@@ -175,7 +176,7 @@ export function createD1Auth(config: D1AuthConfig): Auth {
       const u = await userByEmail(email);
       if (!u) return; // don't reveal whether the email exists
       const raw = await mintOneTime(u.id, "reset");
-      const link = `${config.appUrl}${config.passwordResetPath ?? "/auth/reset"}?token=${raw}`;
+      const link = `${appUrl}${config.passwordResetPath ?? "/auth/reset"}?token=${raw}`;
       await config.sendEmail({
         to: u.email,
         subject: "Reset your password",
