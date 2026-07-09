@@ -27,8 +27,23 @@ CREATE TABLE IF NOT EXISTS auth_tokens (
 CREATE INDEX IF NOT EXISTS auth_tokens_user_id ON auth_tokens (user_id);
 CREATE INDEX IF NOT EXISTS auth_tokens_expires_at ON auth_tokens (expires_at);`;
 
+/**
+ * Structural slice of the Cloudflare D1 binding — only the members this adapter calls,
+ * typed minimally so consuming the package does not require @cloudflare/workers-types.
+ * A real `D1Database` satisfies it: pass `env.DB` as-is.
+ */
+export interface D1Statement {
+  bind(...values: unknown[]): D1Statement;
+  first<T>(): Promise<T | null>;
+  run(): Promise<unknown>;
+}
+
+export interface D1Binding {
+  prepare(query: string): D1Statement;
+}
+
 export interface D1AuthConfig {
-  db: D1Database;
+  db: D1Binding;
   /**
    * Sends the magic-link and password-reset emails — wire `email.send` from the email
    * domain here (or any function with its shape). The contract is the email domain's

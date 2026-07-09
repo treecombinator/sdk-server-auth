@@ -71,6 +71,7 @@ Reserve 401 on other routes for a dead/absent session (e.g. a code like `session
 
 - Errors are `TcError` with specific codes: `email_already_registered`, `email_invalid`, `password_too_short`, `invalid_credentials`, `magic_link_invalid`, `reset_token_invalid`, `jwt_secret_weak`.
 - `sendEmail` is injected — the app wires its own email adapter (e.g. `email.send` from `@treecombinator/sdk-server-email`, or any function with its shape). The contract is the email domain's `EmailMessage`, imported as a type only and inlined into this package's declarations: one source of truth for the shape, zero runtime email dependencies.
+- `db` is typed as a structural slice of the D1 binding (`D1Binding`: `prepare`/`bind`/`first`/`run`), so consuming the package does not require `@cloudflare/workers-types` — pass your `env.DB` as-is.
 - Emails are normalized (trim + lowercase) everywhere; passwords must be at least 8 characters (`register` and `consumePasswordReset`).
 - `jwtSecret` must be at least 32 bytes — `createAuth` throws `jwt_secret_weak` otherwise.
 - Session JWTs are verified statelessly, so a password reset cannot revoke ones already issued: they stay valid until `exp`. Size `sessionTtlSec` (default 7 days) with that window in mind.
