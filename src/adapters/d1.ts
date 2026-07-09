@@ -23,7 +23,9 @@ CREATE TABLE IF NOT EXISTS auth_tokens (
   user_id TEXT NOT NULL,
   type TEXT NOT NULL,
   expires_at TEXT NOT NULL
-);`;
+);
+CREATE INDEX IF NOT EXISTS auth_tokens_user_id ON auth_tokens (user_id);
+CREATE INDEX IF NOT EXISTS auth_tokens_expires_at ON auth_tokens (expires_at);`;
 
 export interface D1AuthConfig {
   db: D1Database;
